@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Tabla de Productos</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+</head>
+<body>
+
+<div class="w3-container">
+    <h2>Lista de Productos</h2>
+    <p>A continuación se muestran los datos de los productos:</p>
+
+    <table class="w3-table-all">
+        <thead>
+            <tr class="w3-green">
+                <th>ID</th>
+                <th>Nombre</th>
+                <th>Descripción</th>
+                <th>Precio</th>
+                <th>Cantidad</th>
+            </tr>
+        </thead>
+        <tbody id="product-table-body">
+            <!-- Los datos de los productos se agregarán aquí dinámicamente -->
+        </tbody>
+    </table>
+</div>
+
+<script>
+// Suponiendo que tienes una función para obtener los productos desde tu backend
+fetch('/products')
+    .then(response => response.json())
+    .then(data => {
+        const productTableBody = document.getElementById('product-table-body');
+        data.forEach(product => {
+            const row = document.createElement('tr');
+            row.innerHTML = `
+                <td>${product.id}</td>
+                <td>${product.nombre}</td>
+                <td>${product.descripcion}</td>
+                <td>${product.precio}</td>
+                <td>${product.cantidad}</td>
+            `;
+            productTableBody.appendChild(row);
+        });
+    })
+    .catch(error => console.error('Error al cargar los productos:', error));
+</script>
+
+</body>
+</html>

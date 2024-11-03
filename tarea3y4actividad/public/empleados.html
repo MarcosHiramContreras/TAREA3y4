@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html>
+<title>Pantalla de Empleados</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+
+<style>
+    body {
+        font-family: Arial, sans-serif;
+        background-color: #f4f4f4; /* Color de fondo suave */
+        color: #333; /* Color del texto */
+        margin: 0;
+        padding: 20px;
+    }
+    
+    ul {
+    list-style-type: none; /* Eliminar los puntos de la lista */
+    padding: 0; /* Eliminar el padding por defecto */
+    text-align: center; /* Centrar el texto del <ul> */
+    }
+
+    h1 {
+        color: #ffffff; /* Verde para el título principal */
+        text-align: center;
+        margin-bottom: 20px;
+    }
+
+    h3 {
+        color: #333;
+        margin-top: 20px;
+        text-align: center;
+    }
+
+    h4 {
+        font-family: Arial, sans-serif;
+        color: #33850a; /* Verde para los subtítulos */
+        margin-top: 15px;
+    }
+
+    form {
+        background: #fff; /* Fondo blanco para formularios */
+        padding: 15px;
+        border-radius: 5px;
+        box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        margin-bottom: 20px;
+    }
+
+    input[type="text"], input[type="number"] {
+        width: calc(100% - 20px); /* Ajustar el ancho del campo */
+        padding: 10px;
+        margin: 10px 0;
+        border: 1px solid #ccc; /* Borde ligero */
+        border-radius: 5px;
+        box-sizing: border-box; /* Incluir padding y borde en el ancho total */
+    }
+
+    button {
+        background-color: #4CAF50; /* Color verde para botones */
+        color: white; /* Texto blanco */
+        padding: 10px;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        width: 100%; /* Botones a ancho completo */
+    }
+
+    button:hover {
+        background-color: #45a049; /* Efecto al pasar el mouse */
+    }
+
+    ul {
+        list-style-type: none; /* Sin viñetas */
+        padding: 0;
+    }
+
+    a {
+        color: #4CAF50; /* Color del enlace */
+        text-decoration: none; /* Sin subrayado */
+    }
+
+    a:hover {
+        text-decoration: underline; /* Subrayar al pasar el mouse */
+    }
+</style>
+
+<body>
+
+    <div class="w3-sidebar w3-bar-block w3-card w3-animate-left" style="display:none" id="mySidebar">
+        <button class="w3-bar-item w3-button w3-large"
+        onclick="w3_close()">Cerrar &times;</button>
+        <a href="menu.html" class="w3-bar-item w3-button">Productos</a>
+        <a href="./empleados.html" class="w3-bar-item w3-button">Empleados</a>
+        <a href="./proveedores.html" class="w3-bar-item w3-button">Proveedores</a>
+      </div>
+      
+      <div id="main">
+
+        <div class="w3-teal">
+          <button id="openNav" class="w3-button w3-teal w3-xlarge" onclick="w3_open()">&#9776;</button>
+          <div class="w3-container">
+            <h1>Bienvenido al Sistema de Gestion de la Tienda</h1>
+              <h1>Administracion de Empleados</h1>
+          </div>
+        </div>
+
+  <div class="w3-container">
+
+    <h3>Para Visualizar Todos los Empleados Haga Click en la Liga:</h3>
+    <ul>
+        <li><a href="./visualizarempleados.html">VER TODOS LOS EMPLEADOS</a></li>
+    </ul>
+    <h3>Operaciones de Empleados:</h3>
+    
+<!-- Formulario para buscar un empleado por ID -->
+<h4>Buscar Empleado por ID</h4>
+<form id="search-form" action="/employees/" method="GET" onsubmit="event.preventDefault(); fetchEmployeeByIdFromForm()">
+    <input type="number" name="id" placeholder="ID del empleado" required />
+    <button type="submit">Buscar Empleado</button>
+</form>
+<div id="employee-result"></div>
+
+<!-- Formulario para insertar un nuevo empleado -->
+<h4>POST: Insertar Empleado</h4>
+<form action="/employees" method="POST">
+    <input type="text" name="nombre" placeholder="Nombre" required />
+    <label for="puesto">Seleccionar Puesto:</label>
+    <select name="puesto" id="puesto" required>
+        <option value="" disabled selected>Seleccione un puesto</option>
+        <option value="Vigilante">Vigilante</option>
+        <option value="Cajero">Cajero</option>
+        <option value="Gerente">Gerente</option>
+        <option value="Dependiente">Dependiente</option>
+        <option value="Almacenista">Almacenista</option>
+        <option value="Supervisor">Supervisor</option>
+        <option value="Atención al Cliente">Atención al Cliente</option>
+    </select>
+    <input type="tel" name="telefono" placeholder="Teléfono" required />
+    <input type="email" name="email" placeholder="Email" required />
+    <button type="submit">Insertar Empleado</button>
+</form>
+
+<!-- Formulario para actualizar completamente un empleado -->
+<h4>PUT: Actualizar Empleado</h4>
+<form id="update-form" action="/employees/1" method="POST" onsubmit="this._method.value='PUT';">
+    <input type="hidden" name="_method" value="PUT" />
+    <input type="number" name="id" placeholder="ID del empleado" required />
+    <input type="text" name="nombre" placeholder="Nombre" required />
+    <label for="puesto">Seleccionar Puesto:</label>
+    <select name="puesto" id="puesto" required>
+        <option value="" disabled selected>Seleccione un puesto</option>
+        <option value="Vigilante">Vigilante</option>
+        <option value="Cajero">Cajero</option>
+        <option value="Gerente">Gerente</option>
+        <option value="Dependiente">Dependiente</option>
+        <option value="Almacenista">Almacenista</option>
+        <option value="Supervisor">Supervisor</option>
+        <option value="Atención al Cliente">Atención al Cliente</option>
+    </select>
+    <input type="tel" name="telefono" placeholder="Teléfono" required />
+    <input type="email" name="email" placeholder="Email" required />
+    <button type="button" onclick="fetchEmployeeForUpdate()">Buscar Empleado</button> <!-- Función para buscar el empleado -->
+    <button type="submit">Actualizar Empleado</button>
+</form>
+
+<!-- Formulario para eliminar un empleado por ID -->
+<h4>DELETE: Eliminar Empleado por ID</h4>
+<form action="/employees/" method="POST" onsubmit="event.preventDefault(); deleteEmployeeById(this)">
+    <input type="hidden" name="_method" value="DELETE" />
+    <input type="number" name="id" placeholder="ID del empleado" required />
+    <button type="submit">Eliminar Empleado</button>
+</form>
+
+<script>
+function fetchEmployeeByIdFromForm() {
+    const id = document.querySelector('#search-form input[name="id"]').value;
+    if (!id) {
+        alert('Por favor ingrese un ID para buscar');
+        return;
+    }
+
+    fetch('/employees/' + id)
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Empleado no encontrado');
+            }
+            return response.json();
+        })
+        .then(data => {
+            const updateForm = document.getElementById('update-form');
+            updateForm.id.value = data.id;
+            updateForm.nombre.value = data.nombre;
+            updateForm.puesto.value = data.puesto;
+            updateForm.telefono.value = data.telefono;
+            updateForm.email.value = data.email;
+            updateForm.action = "/employees/" + data.id;
+            
+            updateForm.querySelector('button[type="submit"]').disabled = false; 
+            document.getElementById('employee-result').innerHTML = 'Empleado encontrado: ' + JSON.stringify(data);
+        })
+        .catch(error => {
+            document.getElementById('employee-result').innerHTML = 'Error: ' + error.message;
+            document.getElementById('update-form').querySelector('button[type="submit"]').disabled = true; 
+        });
+}
+
+function fetchEmployeeForUpdate() {
+    const id = document.querySelector('#update-form input[name="id"]').value;
+    if (!id) {
+        alert('Por favor ingrese un ID para buscar');
+        return;
+    }
+
+    fetch('/employees/' + id)
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Empleado no encontrado');
+            }
+            return response.json();
+        })
+        .then(data => {
+            const updateForm = document.getElementById('update-form');
+            updateForm.nombre.value = data.nombre;
+            updateForm.puesto.value = data.puesto;
+            updateForm.telefono.value = data.telefono;
+            updateForm.email.value = data.email;
+            updateForm.action = "/employees/" + data.id;
+
+            updateForm.querySelector('button[type="submit"]').disabled = false; 
+        })
+        .catch(error => {
+            alert('Error: ' + error.message);
+            document.getElementById('update-form').querySelector('button[type="submit"]').disabled = true; 
+        });
+}
+
+function deleteEmployeeById(form) {
+    const id = form.id.value;
+    fetch('/employees/' + id, {
+        method: 'DELETE'
+    })
+    .then(response => response.json())
+    .then(data => {
+        alert(JSON.stringify(data));
+    })
+    .catch(error => {
+        alert('Error: ' + error.message);
+    });
+}
+
+function w3_open() {
+  document.getElementById("main").style.marginLeft = "25%";
+  document.getElementById("mySidebar").style.width = "25%";
+  document.getElementById("mySidebar").style.display = "block";
+  document.getElementById("openNav").style.display = 'none';
+}
+
+function w3_close() {
+  document.getElementById("main").style.marginLeft = "0%";
+  document.getElementById("mySidebar").style.display = "none";
+  document.getElementById("openNav").style.display = "inline-block";
+}
+
+</script>
+</body>
+</html>

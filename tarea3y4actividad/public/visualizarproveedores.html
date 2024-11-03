@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Tabla de Proveedores</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+</head>
+<body>
+
+<div class="w3-container">
+    <h2>Lista de Proveedores</h2>
+    <p>A continuación se muestran los datos de los proveedores:</p>
+
+    <table class="w3-table-all">
+        <thead>
+            <tr class="w3-green">
+                <th>ID</th>
+                <th>Nombre</th>
+                <th>Dirección</th>
+                <th>Teléfono</th>
+            </tr>
+        </thead>
+        <tbody id="provider-table-body">
+            <!-- Los datos de los proveedores se agregarán aquí dinámicamente -->
+        </tbody>
+    </table>
+</div>
+
+<script>
+// Suponiendo que tienes una función para obtener los proveedores desde tu backend
+fetch('/proveedores')
+    .then(response => response.json())
+    .then(data => {
+        const providerTableBody = document.getElementById('provider-table-body');
+        data.forEach(provider => {
+            const row = document.createElement('tr');
+            row.innerHTML = `
+                <td>${provider.id}</td>
+                <td>${provider.nombre}</td>
+                <td>${provider.direccion}</td>
+                <td>${provider.telefono}</td>
+            `;
+            providerTableBody.appendChild(row);
+        });
+    })
+    .catch(error => console.error('Error al cargar los proveedores:', error));
+</script>
+
+</body>
+</html>

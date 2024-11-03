@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html>
+<title>Pantalla de Productos</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+
+<style>
+    body {
+        font-family: Arial, sans-serif;
+        background-color: #f4f4f4; /* Color de fondo suave */
+        color: #333; /* Color del texto */
+        margin: 0;
+        padding: 20px;
+    }
+
+    ul {
+    list-style-type: none; /* Eliminar los puntos de la lista */
+    padding: 0; /* Eliminar el padding por defecto */
+    text-align: center; /* Centrar el texto del <ul> */
+    }
+    
+    h1 {
+        color: #ffffff; /* Verde para el título principal */
+        text-align: center;
+        margin-bottom: 20px;
+    }
+
+    h3 {
+        color: #333;
+        margin-top: 20px;
+        text-align: center;
+    }
+
+    h4 {
+        color: #4CAF50; /* Verde para los subtítulos */
+        margin-top: 15px;
+    }
+
+    form {
+        background: #fff; /* Fondo blanco para formularios */
+        padding: 15px;
+        border-radius: 5px;
+        box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        margin-bottom: 20px;
+    }
+
+    input[type="text"], input[type="number"] {
+        width: calc(100% - 20px); /* Ajustar el ancho del campo */
+        padding: 10px;
+        margin: 10px 0;
+        border: 1px solid #ccc; /* Borde ligero */
+        border-radius: 5px;
+        box-sizing: border-box; /* Incluir padding y borde en el ancho total */
+    }
+
+    button {
+        background-color: #4CAF50; /* Color verde para botones */
+        color: white; /* Texto blanco */
+        padding: 10px;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        width: 100%; /* Botones a ancho completo */
+    }
+
+    button:hover {
+        background-color: #45a049; /* Efecto al pasar el mouse */
+    }
+
+    ul {
+        list-style-type: none; /* Sin viñetas */
+        padding: 0;
+    }
+
+    a {
+        color: #4CAF50; /* Color del enlace */
+        text-decoration: none; /* Sin subrayado */
+    }
+
+    a:hover {
+        text-decoration: underline; /* Subrayar al pasar el mouse */
+    }
+</style>
+
+<body>
+
+    <div class="w3-sidebar w3-bar-block w3-card w3-animate-left" style="display:none" id="mySidebar">
+        <button class="w3-bar-item w3-button w3-large"
+        onclick="w3_close()">Cerrar &times;</button>
+        <a href="menu.html" class="w3-bar-item w3-button">Productos</a>
+        <a href="./empleados.html" class="w3-bar-item w3-button">Empleados</a>
+        <a href="./proveedores.html" class="w3-bar-item w3-button">Proveedores</a>
+        <a href="./ventas.html" class="w3-bar-item w3-button">Ventas</a>
+      </div>
+      
+      <div id="main">
+
+        <div class="w3-teal">
+          <button id="openNav" class="w3-button w3-teal w3-xlarge" onclick="w3_open()">&#9776;</button>
+          <div class="w3-container">
+            <h1>Bienvenido al Sistema de Gestion de la Tienda</h1>
+              <h1>Administracion de Productos</h1>
+          </div>
+        </div>
+
+<div class="w3-container">
+    <h3>Para Visualizar Todos los Productos haga Click en la Liga:</h3>
+    <ul>
+        <li><a href="./visualizarproductos.html">VER TODOS LOS PRODUCTOS</a></li>
+    </ul>
+    <h3>Operaciones de Productos:</h3>
+    
+    <!-- Formulario para buscar un producto por ID -->
+    <h4>Buscar Producto por ID</h4>
+    <form id="search-form" action="/products/" method="GET" onsubmit="event.preventDefault(); fetchProductByIdFromForm()">
+        <input type="number" name="id" placeholder="ID del producto" required />
+        <button type="submit">Buscar Producto</button>
+    </form>
+    <div id="product-result"></div>
+
+    <!-- Formulario para insertar un nuevo producto -->
+    <h4>POST: Insertar Producto</h4>
+    <form action="/products" method="POST">
+        <input type="text" name="nombre" placeholder="Nombre" required />
+        <input type="text" name="descripcion" placeholder="Descripción" />
+        <input type="number" step="0.01" name="precio" placeholder="Precio" required />
+        <input type="number" name="cantidad" placeholder="Cantidad" required />
+        <button type="submit">Insertar Producto</button>
+    </form>
+    
+ <!-- Formulario para actualizar completamente un producto -->
+<h4>PUT: Actualizar Producto</h4>
+<form id="update-form" action="/products/1" method="POST" onsubmit="this._method.value='PUT';">
+    <input type="hidden" name="_method" value="PUT" />
+    <input type="number" name="id" placeholder="ID del producto" required />
+    <input type="text" name="nombre" placeholder="Nombre" required />
+    <input type="text" name="descripcion" placeholder="Descripción" />
+    <input type="number" step="0.01" name="precio" placeholder="Precio" required />
+    <input type="number" name="cantidad" placeholder="Cantidad" required />
+    <button type="button" onclick="fetchProductForUpdate()">Buscar Producto</button> <!-- Función para buscar el producto -->
+    <button type="submit">Actualizar Producto</button>
+</form>
+    
+    <!-- Formulario para eliminar un producto por ID -->
+    <h4>DELETE: Eliminar Producto por ID</h4>
+    <form action="/products/" method="POST" onsubmit="event.preventDefault(); deleteProductById(this)">
+        <input type="hidden" name="_method" value="DELETE" />
+        <input type="number" name="id" placeholder="ID del producto" required />
+        <button type="submit">Eliminar Producto</button>
+    </form>
+</div>
+   
+</div>
+
+<script>
+function w3_open() {
+  document.getElementById("mySidebar").style.display = "block";
+}
+
+function w3_close() {
+  document.getElementById("mySidebar").style.display = "none";
+}
+
+// Función para buscar producto por ID usando fetch
+function fetchProductByIdFromForm() {
+    const id = document.querySelector('#search-form input[name="id"]').value; // Obtener el ID del formulario de búsqueda
+
+    if (!id) { // Comprobar si el ID está vacío
+        alert('Por favor ingrese un ID para buscar');
+        return;
+    }
+
+    fetch('/products/' + id)
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Producto no encontrado');
+            }
+            return response.json();
+        })
+        .then(data => {
+            // Llenar el formulario de actualización con los datos del producto
+            const updateForm = document.getElementById('update-form');
+            updateForm.id.value = data.id; // Establecer el ID en el formulario de actualización
+            updateForm.nombre.value = data.nombre;
+            updateForm.descripcion.value = data.descripcion;
+            updateForm.precio.value = data.precio;
+            updateForm.cantidad.value = data.cantidad;
+            updateForm.action = "/products/" + data.id; // Actualizar la acción del formulario con el ID del producto
+            
+            // Habilitar el botón de actualizar producto
+            updateForm.querySelector('button[type="submit"]').disabled = false; 
+            document.getElementById('product-result').innerHTML = 'Producto encontrado: ' + JSON.stringify(data);
+        })
+        .catch(error => {
+            document.getElementById('product-result').innerHTML = 'Error: ' + error.message;
+            // Deshabilitar el botón de actualizar producto si no se encuentra
+            document.getElementById('update-form').querySelector('button[type="submit"]').disabled = true; 
+        });
+}
+
+function fetchProductForUpdate() {
+    const id = document.querySelector('#update-form input[name="id"]').value; // Obtener el ID del formulario de actualización
+
+    if (!id) { // Comprobar si el ID está vacío
+        alert('Por favor ingrese un ID para buscar');
+        return;
+    }
+
+    fetch('/products/' + id)
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Producto no encontrado');
+            }
+            return response.json();
+        })
+        .then(data => {
+            // Llenar el formulario de actualización con los datos del producto
+            const updateForm = document.getElementById('update-form');
+            updateForm.nombre.value = data.nombre; // Establecer el nombre en el formulario
+            updateForm.descripcion.value = data.descripcion; // Establecer la descripción
+            updateForm.precio.value = data.precio; // Establecer el precio
+            updateForm.cantidad.value = data.cantidad; // Establecer la cantidad
+            updateForm.action = "/products/" + data.id; // Actualizar la acción del formulario con el ID del producto
+
+            // Habilitar el botón de actualizar producto
+            updateForm.querySelector('button[type="submit"]').disabled = false; 
+        })
+        .catch(error => {
+            alert('Error: ' + error.message);
+            // Deshabilitar el botón de actualizar producto si no se encuentra
+            document.getElementById('update-form').querySelector('button[type="submit"]').disabled = true; 
+        });
+}
+
+            // Función para eliminar producto por ID usando fetch
+            function deleteProductById(form) {
+                const id = form.id.value;
+                fetch('/products/' + id, {
+                    method: 'DELETE'
+                })
+                .then(response => response.json())
+                .then(data => {
+                    alert(JSON.stringify(data));
+                })
+                .catch(error => {
+                    alert('Error: ' + error.message);
+                });
+            }
+
+            function w3_open() {
+  document.getElementById("main").style.marginLeft = "25%";
+  document.getElementById("mySidebar").style.width = "25%";
+  document.getElementById("mySidebar").style.display = "block";
+  document.getElementById("openNav").style.display = 'none';
+}
+
+function w3_close() {
+  document.getElementById("main").style.marginLeft = "0%";
+  document.getElementById("mySidebar").style.display = "none";
+  document.getElementById("openNav").style.display = "inline-block";
+}
+
+</script>
+     
+</body>
+</html>

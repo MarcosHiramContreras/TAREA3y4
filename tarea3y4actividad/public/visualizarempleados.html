@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Tabla de Empleados</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+</head>
+<body>
+
+<div class="w3-container">
+    <h2>Lista de Empleados</h2>
+    <p>A continuación se muestran los datos de los empleados:</p>
+
+    <table class="w3-table-all">
+        <thead>
+            <tr class="w3-green">
+                <th>ID</th>
+                <th>Nombre</th>
+                <th>Puesto</th>
+                <th>Teléfono</th>
+                <th>Email</th>
+            </tr>
+        </thead>
+        <tbody id="employee-table-body">
+            <!-- Los datos de los empleados se agregarán aquí dinámicamente -->
+        </tbody>
+    </table>
+</div>
+
+<script>
+fetch('/employees') // Asegúrate de que esta ruta exista en tu backend
+    .then(response => response.json())
+    .then(data => {
+        const employeeTableBody = document.getElementById('employee-table-body');
+        data.forEach(employee => {
+            const row = document.createElement('tr');
+            row.innerHTML = `
+                <td>${employee.id}</td>
+                <td>${employee.nombre}</td>
+                <td>${employee.puesto}</td>
+                <td>${employee.telefono}</td>
+                <td>${employee.email}</td>
+            `;
+            employeeTableBody.appendChild(row);
+        });
+    })
+    .catch(error => console.error('Error al cargar los empleados:', error));
+</script>
+
+</body>
+</html>

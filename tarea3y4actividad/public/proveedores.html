@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html>
+<title>Pantalla de Proveedores</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+
+<style>
+    body {
+        font-family: Arial, sans-serif;
+        background-color: #f4f4f4; /* Color de fondo suave */
+        color: #333; /* Color del texto */
+        margin: 0;
+        padding: 20px;
+    }
+
+    ul {
+        list-style-type: none; /* Eliminar los puntos de la lista */
+        padding: 0; /* Eliminar el padding por defecto */
+        text-align: center; /* Centrar el texto del <ul> */
+    }
+
+    h1 {
+        color: #ffffff; /* Verde para el título principal */
+        text-align: center;
+        margin-bottom: 20px;
+    }
+
+    h3 {
+        color: #333;
+        margin-top: 20px;
+        text-align: center;
+    }
+
+    h4 {
+        font-family: Arial, sans-serif;
+        color: #33850a; /* Verde para los subtítulos */
+        margin-top: 15px;
+    }
+
+    form {
+        background: #fff; /* Fondo blanco para formularios */
+        padding: 15px;
+        border-radius: 5px;
+        box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        margin-bottom: 20px;
+    }
+
+    input[type="text"], input[type="number"], input[type="tel"], input[type="email"] {
+        width: calc(100% - 20px); /* Ajustar el ancho del campo */
+        padding: 10px;
+        margin: 10px 0;
+        border: 1px solid #ccc; /* Borde ligero */
+        border-radius: 5px;
+        box-sizing: border-box; /* Incluir padding y borde en el ancho total */
+    }
+
+    button {
+        background-color: #4CAF50; /* Color verde para botones */
+        color: white; /* Texto blanco */
+        padding: 10px;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        width: 100%; /* Botones a ancho completo */
+    }
+
+    button:hover {
+        background-color: #45a049; /* Efecto al pasar el mouse */
+    }
+
+    a {
+        color: #4CAF50; /* Color del enlace */
+        text-decoration: none; /* Sin subrayado */
+    }
+
+    a:hover {
+        text-decoration: underline; /* Subrayar al pasar el mouse */
+    }
+</style>
+
+<body>
+
+    <div class="w3-sidebar w3-bar-block w3-card w3-animate-left" style="display:none" id="mySidebar">
+        <button class="w3-bar-item w3-button w3-large" onclick="w3_close()">Cerrar &times;</button>
+        <a href="menu.html" class="w3-bar-item w3-button">Productos</a>
+        <a href="./empleados.html" class="w3-bar-item w3-button">Empleados</a>
+        <a href="./proveedores.html" class="w3-bar-item w3-button">Proveedores</a>
+        <a href="./ventas.html" class="w3-bar-item w3-button">Ventas</a>
+    </div>
+      
+    <div id="main">
+
+        <div class="w3-teal">
+          <button id="openNav" class="w3-button w3-teal w3-xlarge" onclick="w3_open()">&#9776;</button>
+          <div class="w3-container">
+            <h1>Bienvenido al Sistema de Gestión de la Tienda</h1>
+              <h1>Administración de Proveedores</h1>
+          </div>
+        </div>
+
+        <div class="w3-container">
+            <h3>Para Visualizar Todos los Proveedores Haga Click en la Liga:</h3>
+            <ul>
+                <li><a href="./visualizarproveedores.html">VER TODOS LOS PROVEEDORES</a></li>
+            </ul>
+            <h3>Operaciones de Proveedores:</h3>
+    
+            <h4>Buscar Proveedor por ID</h4>
+            <form id="search-form" action="/proveedores/" method="GET" onsubmit="event.preventDefault(); fetchProviderByIdFromForm()">
+                <input type="number" name="id" placeholder="ID del proveedor" required />
+                <button type="submit">Buscar Proveedor</button>
+            </form>
+            <div id="provider-result"></div>
+
+            <!-- Formulario para insertar un nuevo proveedor -->
+            <h4>POST: Insertar Proveedor</h4>
+            <form action="/proveedores" method="POST">
+                <input type="text" name="nombre" placeholder="Nombre" required />
+                <input type="text" name="direccion" placeholder="Dirección" required />
+                <input type="tel" name="telefono" placeholder="Teléfono" required />
+                <button type="submit">Insertar Proveedor</button>
+            </form>
+
+            <!-- Formulario para actualizar completamente un proveedor -->
+            <h4>PUT: Actualizar Proveedor</h4>
+            <form id="update-form" action="/proveedores/1" method="POST" onsubmit="this._method.value='PUT';">
+                <input type="hidden" name="_method" value="PUT" />
+                <input type="number" name="id" placeholder="ID del proveedor" required />
+                <input type="text" name="nombre" placeholder="Nombre" required />
+                <input type="text" name="direccion" placeholder="Dirección" required />
+                <input type="tel" name="telefono" placeholder="Teléfono" required />
+                <button type="button" onclick="fetchProviderForUpdate()">Buscar Proveedor</button>
+                <button type="submit">Actualizar Proveedor</button>
+            </form>
+
+            <!-- Formulario para eliminar un proveedor por ID -->
+            <h4>DELETE: Eliminar Proveedor por ID</h4>
+            <form action="/proveedores/" method="POST" onsubmit="event.preventDefault(); deleteProviderById(this)">
+                <input type="hidden" name="_method" value="DELETE" />
+                <input type="number" name="id" placeholder="ID del proveedor" required />
+                <button type="submit">Eliminar Proveedor</button>
+            </form>
+
+            <script>
+                function fetchProviderByIdFromForm() {
+                    const id = document.querySelector('#search-form input[name="id"]').value;
+                    if (!id) {
+                        alert('Por favor ingrese un ID para buscar');
+                        return;
+                    }
+
+                    fetch('/proveedores/' + id)
+                        .then(response => {
+                            if (!response.ok) {
+                                throw new Error('Proveedor no encontrado');
+                            }
+                            return response.json();
+                        })
+                        .then(data => {
+                            const updateForm = document.getElementById('update-form');
+                            updateForm.id.value = data.id;
+                            updateForm.nombre.value = data.nombre;
+                            updateForm.direccion.value = data.direccion;
+                            updateForm.telefono.value = data.telefono;
+                            updateForm.action = "/proveedores/" + data.id;
+                            
+                            updateForm.querySelector('button[type="submit"]').disabled = false; 
+                            document.getElementById('provider-result').innerHTML = 'Proveedor encontrado: ' + JSON.stringify(data);
+                        })
+                        .catch(error => {
+                            document.getElementById('provider-result').innerHTML = 'Error: ' + error.message;
+                            document.getElementById('update-form').querySelector('button[type="submit"]').disabled = true; 
+                        });
+                }
+
+                function fetchProviderForUpdate() {
+                    const id = document.querySelector('#update-form input[name="id"]').value;
+                    if (!id) {
+                        alert('Por favor ingrese un ID para buscar');
+                        return;
+                    }
+
+                    fetch('/proveedores/' + id)
+                        .then(response => {
+                            if (!response.ok) {
+                                throw new Error('Proveedor no encontrado');
+                            }
+                            return response.json();
+                        })
+                        .then(data => {
+                            const updateForm = document.getElementById('update-form');
+                            updateForm.nombre.value = data.nombre;
+                            updateForm.direccion.value = data.direccion;
+                            updateForm.telefono.value = data.telefono;
+                            updateForm.action = "/proveedores/" + data.id;
+
+                            updateForm.querySelector('button[type="submit"]').disabled = false; 
+                        })
+                        .catch(error => {
+                            alert('Error: ' + error.message);
+                            document.getElementById('update-form').querySelector('button[type="submit"]').disabled = true; 
+                        });
+                }
+
+                function deleteProviderById(form) {
+                    const id = form.id.value;
+                    fetch('/proveedores/' + id, {
+                        method: 'DELETE'
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        alert(JSON.stringify(data));
+                    })
+                    .catch(error => {
+                        alert('Error: ' + error.message);
+                    });
+                }
+
+                function w3_open() {
+                    document.getElementById("main").style.marginLeft = "25%";
+                    document.getElementById("mySidebar").style.width = "25%";
+                    document.getElementById("mySidebar").style.display = "block";
+                    document.getElementById("openNav").style.display = 'none';
+                }
+
+                function w3_close() {
+                    document.getElementById("main").style.marginLeft = "0";
+                    document.getElementById("mySidebar").style.display = "none";
+                    document.getElementById("openNav").style.display = "block";
+                }
+            </script>
+        </div>
+    </div>
+</body>
+</html>

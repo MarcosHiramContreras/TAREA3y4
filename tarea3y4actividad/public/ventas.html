@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Pantalla de Ventas</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4; /* Color de fondo suave */
+            color: #333; /* Color del texto */
+            margin: 0;
+            padding: 20px;
+        }
+
+        ul {
+            list-style-type: none; /* Eliminar los puntos de la lista */
+            padding: 0; /* Eliminar el padding por defecto */
+            text-align: center; /* Centrar el texto del <ul> */
+        }
+
+        h1 {
+            color: #ffffff; /* Verde para el título principal */
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        h3 {
+            color: #333;
+            margin-top: 20px;
+            text-align: center;
+        }
+
+        h4 {
+            font-family: Arial, sans-serif;
+            color: #33850a; /* Verde para los subtítulos */
+            margin-top: 15px;
+        }
+
+        form {
+            background: #fff; /* Fondo blanco para formularios */
+            padding: 15px;
+            border-radius: 5px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+
+        input[type="text"], input[type="number"], input[type="tel"], input[type="email"], select {
+            width: calc(100% - 20px); /* Ajustar el ancho del campo */
+            padding: 10px;
+            margin: 10px 0;
+            border: 1px solid #ccc; /* Borde ligero */
+            border-radius: 5px;
+            box-sizing: border-box; /* Incluir padding y borde en el ancho total */
+        }
+
+        button {
+            background-color: #4CAF50; /* Color verde para botones */
+            color: white; /* Texto blanco */
+            padding: 10px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            width: 100%; /* Botones a ancho completo */
+        }
+
+        button:hover {
+            background-color: #45a049; /* Efecto al pasar el mouse */
+        }
+
+        a {
+            color: #4CAF50; /* Color del enlace */
+            text-decoration: none; /* Sin subrayado */
+        }
+
+        a:hover {
+            text-decoration: underline; /* Subrayar al pasar el mouse */
+        }
+    </style>
+</head>
+<body>
+
+    <div class="w3-sidebar w3-bar-block w3-card w3-animate-left" style="display:none" id="mySidebar">
+        <button class="w3-bar-item w3-button w3-large" onclick="w3_close()">Cerrar &times;</button>
+        <a href="menu.html" class="w3-bar-item w3-button">Productos</a>
+        <a href="./empleados.html" class="w3-bar-item w3-button">Empleados</a>
+        <a href="./proveedores.html" class="w3-bar-item w3-button">Proveedores</a>
+        <a href="./ventas.html" class="w3-bar-item w3-button">Ventas</a>
+    </div>
+      
+    <div id="main">
+
+        <div class="w3-teal">
+            <button id="openNav" class="w3-button w3-teal w3-xlarge" onclick="w3_open()">&#9776;</button>
+            <div class="w3-container">
+                <h1>Bienvenido al Sistema de Gestión de la Tienda</h1>
+                <h1>Administración de Ventas</h1>
+            </div>
+        </div>
+
+        <div class="w3-container">
+            <h3>Para Visualizar Todas las Ventas Haga Click en la Liga:</h3>
+            <ul>
+                <li><a href="./visualizarventas.html">VER TODAS LAS VENTAS</a></li>
+            </ul>
+            <h3>Operaciones de Ventas:</h3>
+
+            <h4>Buscar Venta por ID</h4>
+            <form id="search-form" action="/ventas/" method="GET" onsubmit="event.preventDefault(); fetchSaleByIdFromForm()">
+                <input type="number" name="id" placeholder="ID de la Venta" required />
+                <button type="submit">Buscar Venta</button>
+            </form>
+            <div id="sale-result"></div>
+
+            <!-- Formulario para insertar una nueva venta -->
+<h4>POST: Insertar Venta</h4>
+<form action="/ventas" method="POST" onsubmit="return calculateTotal()">
+    <label for="producto_id">ID del Producto:</label>
+    <select name="producto_id" id="producto_id" required onchange="updatePrice()">
+        <option value="">Seleccione un producto</option>
+    </select>
+    
+    <label for="fecha">Fecha de Venta:</label>
+    <input type="date" name="fecha" id="fecha" required />
+
+    <label for="total">Total:</label>
+    <input type="text" name="total" id="total" placeholder="Total" required />
+
+    <button type="submit">Insertar Venta</button>
+</form>
+
+            <!-- Formulario para actualizar completamente una venta -->
+            <h4>PUT: Actualizar Venta</h4>
+            <form id="update-form" action="/ventas/1" method="POST" onsubmit="this._method.value='PUT';">
+                <input type="hidden" name="_method" value="PUT" />
+                <input type="number" name="id" placeholder="ID de la venta" required />
+                <label for="update_fecha">Fecha de Venta:</label>
+                <input type="date" name="fecha" id="update_fecha" required />
+                <label for="Update_total">Total:</label>
+                <input type="text" name="total" id="Update_total" required />
+                <button type="button" onclick="fetchSaleForUpdate()">Buscar Venta</button>
+                <button type="submit">Actualizar Venta</button>
+            </form>
+
+            <!-- Formulario para eliminar una venta por ID -->
+            <h4>DELETE: Eliminar Venta por ID</h4>
+            <form action="/ventas/" method="POST" onsubmit="event.preventDefault(); deleteSaleById(this)">
+                <input type="hidden" name="_method" value="DELETE" />
+                <input type="number" name="id" placeholder="ID de la venta" required />
+                <button type="submit">Eliminar Venta</button>
+            </form>
+
+            <script>
+                // Cargar la lista de productos
+    function loadProducts() {
+        fetch('/productos') // Este endpoint debe coincidir con el que configuraste en el servidor
+            .then(response => response.json())
+            .then(data => {
+                const productSelect = document.getElementById('producto_id');
+                data.forEach(product => {
+                    const option = document.createElement('option');
+                    option.value = product.id; // Asegúrate que 'id' es el campo correcto
+                    option.textContent = product.id; // Cambia esto si necesitas mostrar otro campo
+                    productSelect.appendChild(option);
+                });
+            })
+            .catch(error => {
+                console.error('Error al cargar productos:', error);
+            });
+    }
+
+    // Llama a la función al cargar la página
+    document.addEventListener('DOMContentLoaded', loadProducts);
+
+                function fetchSaleByIdFromForm() {
+                    const id = document.querySelector('#search-form input[name="id"]').value;
+                    if (!id) {
+                        alert('Por favor ingrese un ID para buscar');
+                        return;
+                    }
+
+                    fetch('/ventas/' + id)
+                        .then(response => {
+                            if (!response.ok) {
+                                throw new Error('Venta no encontrada');
+                            }
+                            return response.json();
+                        })
+                        .then(data => {
+                            document.getElementById('sale-result').innerHTML = 'Venta encontrada: ' + JSON.stringify(data);
+                        })
+                        .catch(error => {
+                            document.getElementById('sale-result').innerHTML = 'Error: ' + error.message;
+                        });
+                }
+
+                function fetchSaleForUpdate() {
+                    const id = document.querySelector('#update-form input[name="id"]').value;
+                    if (!id) {
+                        alert('Por favor ingrese un ID para buscar');
+                        return;
+                    }
+
+                    fetch('/ventas/' + id)
+                        .then(response => {
+                            if (!response.ok) {
+                                throw new Error('Venta no encontrada');
+                            }
+                            return response.json();
+                        })
+                        .then(data => {
+                            const updateForm = document.getElementById('update-form');
+                            updateForm.fecha.value = data.fecha;
+                            updateForm.total.value = data.total;
+                            updateForm.action = "/ventas/" + data.id;
+                            updateForm.querySelector('button[type="submit"]').disabled = false; 
+                        })
+                        .catch(error => {
+                            alert('Error: ' + error.message);
+                            document.getElementById('update-form').querySelector('button[type="submit"]').disabled = true; 
+                        });
+                }
+
+                function deleteSaleById(form) {
+                    const id = form.id.value;
+                    fetch('/ventas/' + id, {
+                        method: 'DELETE'
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        alert(JSON.stringify(data));
+                    })
+                    .catch(error => {
+                        alert('Error: ' + error.message);
+                    });
+                }
+
+                function w3_open() {
+                    document.getElementById("mySidebar").style.display = "block";
+                    document.getElementById("main").style.marginLeft = "250px";
+                }
+
+                function w3_close() {
+                    document.getElementById("mySidebar").style.display = "none";
+                    document.getElementById("main").style.marginLeft = "0";
+                }
+            </script>
+        </div>
+    </div>
+</body>
+</html>
